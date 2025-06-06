@@ -1,15 +1,17 @@
 import os
 from flask import Flask, render_template
-from blueprints.ai_routes import ai_bp
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, jsonify, Response
 
+
 from db import db
 from models import Message, Summary
+from blueprints.ai_routes import ai_bp
 
 # Create and configure flask app object
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initlizalize app extensions
 db.init_app(app)
