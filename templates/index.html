@@ -1,9 +1,186 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Hello World</title>
-    </head>
-    <body>
-        <h1>Hello World</h1>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ project_name }} | Welcome</title>
+  
+</head>
+
+<body>
+  
+  <main>
+    <!-- Spinner -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="sectionCard">
+      <!-- Title -->
+      <header>
+        <h1 class="text-large">{{ project_name }}</h1>
+      </header>
+
+      <!-- Credits and Controls -->
+      <h2 class="text-large">Controls</h2>
+      <p class="text-normal">Use the globe to select points, then place messages about locations for others to see</p>
+      <p class="text-normal">Use the find button on messages to located points, the info button to get a summary of the location</p>
+      <h2 class="text-large">Credits</h2>
+      <p class="text-normal">ChatOnline.World est. 2025</p>
+      <p class="text-normal">Globe images - “2K Earth Day Map” by Solar System Scope – Source: https://www.solarsystemscope.com/textures/ – Licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)</p>
+      <p class="text-normal">Built by Anthony Peters (temp placeholder)</p>
+      <p class="text-normal"></p>
+
+      <!-- Shared Timezone Selector -->
+      <div id="tzContainer">
+        <label for="tzSelect" class="text-normal">Time zone:</label>
+        <select id="tzSelect" class="text-normal"></select>
+      </div>
+    </div>
+
+    <!-- Post Form -->
+    <section class="sectionCard" id="form">
+      <h2 class="centered_header text-large">Post a Message</h2>
+      <p class="text-normal">
+        Local time: <strong id="localTime">--:--:--</strong>
+        (<span id="localZone" class="text-normal">UTC</span>)
+      </p>
+      <textarea id="msg" placeholder="Your message…" class="text-normal"></textarea><br>
+      <div class="sectionCardRow">
+        <label class="text-normal">
+          Latitude:
+          <input id="latDeg" type="number" step="0.0001" placeholder="Degrees">
+          <select id="latDir" class="selection-options">
+            <option value="N">N</option>
+            <option value="S">S</option>
+          </select>
+        </label>
+        <label class="text-normal">
+          Longitude:
+          <input id="lngDeg" type="number" step="0.0001" placeholder="Degrees">
+          <select id="lngDir" class="selection-options">
+            <option value="E">E</option>
+            <option value="W">W</option>
+          </select>
+        </label>
+        <button id="postBtn" class="text-large">Post</button>
+      </div>
+    </section>
+
+    <!-- Toggle button -->
+    <button id="fsTogglePanelButton" class="text-large">☰ Filters & Sort</button>
+
+    <!-- Toggle Panel -->
+    <div id="fsTogglePanel" class="closed_panel">
+
+      <!-- Filters -->
+      <div class="sectionCard">
+        <section id="filters">
+          <h2 class="text-large">Filter Messages</h2>
+          <label class="sectionCardColumn">
+            Start (date & time):
+            <input type="datetime-local" id="startDateTime">
+          </label>
+
+          <label class="sectionCardColumn text-normal">
+            End (date & time):
+            <input type="datetime-local" id="endDateTime">
+          </label>
+
+          <label class="sectionCardRow text-normal">
+            Lat Min:
+            <input type="number" step="0.0001" id="latMin" placeholder="Min latitude degrees">
+            <select id="latMinDir" class="selection-options">
+              <option value="N">N</option>
+              <option value="S">S</option>
+            </select>
+          </label>
+
+          <label class="sectionCardRow text-normal">
+            Lat Max:
+            <input type="number" step="0.0001" id="latMax" placeholder="Max latitude degrees">
+            <select id="latMaxDir" class="selection-options">
+              <option value="N">N</option>
+              <option value="S">S</option>
+            </select>
+          </label>
+
+          <label class="sectionCardRow text-normal">
+            Lng Min:
+            <input type="number" step="0.0001" id="lngMin" placeholder="Min longitude degrees">
+            <select id="lngMinDir">
+              <option value="E">E</option>
+              <option value="W">W</option>
+            </select>
+          </label>
+
+          <label class="sectionCardRow text-normal">
+            Lng Max:
+            <input type="number" step="0.0001" id="lngMax" placeholder="Max longitude degrees">
+            <select id="lngMaxDir">
+              <option value="E">E</option>
+              <option value="W">W</option>
+            </select>
+          </label>
+
+          <div class="sectionCardRow text-normal">
+            <button id="applyFilters" class="text-large">Apply Filters</button>
+            <button id="resetFilters" class="text-large">Reset Filters</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sorting -->
+      <div class="sectionCard">
+        <section id="sorting">
+          <h2 class="text-large">Sort Messages</h2>
+
+          <div class="sectionCardColumn">
+            <label for="sortField" class="text-normal">Field:</label>
+            <select id="sortField" class="text-normal">
+              <option value="date">Date Posted</option>
+              <option value="length">Message Length</option>
+              <option value="lat">Latitude</option>
+              <option value="lng">Longitude</option>
+            </select>
+
+            <label for="sortDir" class="text-normal">Order:</label>
+            <select id="sortDir" class="text-normal">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+            <button id="resetSort" class="text-large">Reset Sort</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
+
+    <!-- Globe model -->
+    <section id="globeSection" class="section-container globe-section">
+      <h2>Globe</h2>
+      <canvas id="threeGlobeCanvas"></canvas>
+    </section>
+
+    <!-- Messages Feed -->
+    <section class="sectionCard" id="feed">
+      <h2 class="text-large">Messages</h2>
+      <button id="clearMessageBtn" class="text-large">Clear Messages</button>
+      <button id="resetHiddenMessagesBtn" class="text-large">Reset Hidden Messages</button>
+        <div class="scroll-container">
+          <ul id="messages"></ul>
+        </div>
+    </section>
+
+    <!-- Ask about location -->
+    <section class="sectionCard" id="areaChat">
+      <h2 class="text-large">Ask about a location</h2>
+      <button id="clearSummariesBtn" class="text-large">Clear Summaries</button>
+      <button id="resetHiddenSummariesBtn" class="text-large">Reset Hidden Summaries</button>
+        <div class="scroll-container sectionCardColumn">
+          <div id="summaryResponses"></div>
+        </div>
+    </section>
+  </main>
+
+</body>
 </html>
