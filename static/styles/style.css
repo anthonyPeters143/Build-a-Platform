@@ -1,0 +1,366 @@
+/* -------------- Root Font -------------- */
+html {
+  font-size: clamp(14px, 1.1vw, 18px);
+}
+
+/* -------------- Text-Size Utilities -------------- */
+/* Normal baseline text (most body copy) */
+.text-normal {
+  font-size: 1rem;
+}
+
+/* Slightly larger text for headers/buttons/selectors */
+.text-large {
+  font-size: 1.25rem;
+}
+
+/* -------------- Body Style -------------- */
+body {
+  font-family: sans-serif;
+  width: 100%;
+  margin: 0;
+  padding: 1% 2%;
+  box-sizing: border-box;
+}
+
+/* -------------- Main Flex Container -------------- */
+main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1%;
+}
+
+/* -------------- Card Base Styles (Mobile First) -------------- */
+.sectionCard,
+.globe-section {
+  flex: 0 0 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* -------------- Two-Column Breakpoint -------------- */
+@media (min-width: 1000px) {
+  .sectionCard,
+  .globe-section {
+    flex: 0 0 48%;
+  }
+}
+
+/* -------------- Three-Column Breakpoint -------------- */
+@media (min-width: 1500px) {
+  .sectionCard,
+  .globe-section {
+    flex: 0 0 31%;
+  }
+}
+
+/* -------------- Section Headers -------------- */
+header h1 {
+  text-align: center;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.centered_header {
+  text-align: center;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* -------------- Forms & Inputs -------------- */
+#form textarea {
+  width: 100%;
+  height: 4rem;
+  font-size: 1rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  resize: vertical;
+}
+
+#form input[type="number"],
+#filters input[type="number"],
+#filters input[type="datetime-local"] {
+  width: 85%;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+/* -------------- SectionCardRow & Column -------------- */
+.sectionCardRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1%;
+  flex-wrap: wrap;
+}
+
+.sectionCardColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.5rem;
+}
+
+/* -------------- Scrollable Containers -------------- */
+.scroll-container {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Prevent inner list from adding extra top/bottom margin */
+.scroll-container ul,
+.scroll-container #summaryResponses {
+  margin: 0;
+  padding: 0;
+}
+
+/* -------------- Filters & Sort Panel Toggle Button -------------- */
+#fsTogglePanelButton {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  padding: 0.5rem 1rem;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#fsTogglePanelButton:hover {
+  background-color: #2980b9;
+}
+
+/* -------------- Filters & Sort Panel -------------- */
+#fsTogglePanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 90%;
+  max-width: 300px;
+  height: 100vh;
+  background: #555;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+#fsTogglePanel.open {
+  transform: translateX(0);
+}
+
+/* -------------- Globe & Canvas -------------- */
+.globe-section h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+#threeGlobeCanvas {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: block;
+  border-radius: 0.25rem;
+}
+
+/* -------------- Messages Feed -------------- */
+#feed h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+#feed ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#feed li {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ccc;
+}
+
+/* -------------- Message Container -------------- */
+.message-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+/* -------------- Message Header & Coords & Body -------------- */
+.message-header {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.message-coords {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.message-body {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+/* -------------- Message Buttons (“Info,” “Find,” “Hide”) -------------- */
+.message-btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.message-button {
+  flex: 1;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: 1px solid #bbb;
+  border-radius: 0.25rem;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.message-button:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+/* -------------- Location Summary (Ask about Location) -------------- */
+.location-summary-container {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: #fafafa;
+  margin-bottom: 1rem;
+}
+
+.location-summary-location {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.location-summary-summary {
+  width: 100%;
+  resize: vertical;
+  min-height: 4rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+}
+
+.location-summary-button {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: 1px solid #bbb;
+  border-radius: 0.25rem;
+  background: #e0e0e0;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.location-summary-button:hover {
+  background: #777;
+}
+
+/* -------------- Loading Spinner -------------- */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* -------------- Miscellaneous Generic Button Styles -------------- */
+button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #777;
+  background: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+/* -------------- Miscellaneous Uility Styles -------------- */
+.highlighted {
+  background-color: rgba(255, 255, 0, 0.3);
+  transition: background-color 0.5s ease-out;
+}
+
+/* -------------- Utility: ID Conflict Resolution -------------- */
+#messages {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
