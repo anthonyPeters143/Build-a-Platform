@@ -1,3 +1,22 @@
+# ----------------------------------------
+# Purpose:
+#   - Initialize the Flask application, register blueprints, and define core routes:
+#       • GET/POST /api/messages
+#       • GET /api/summaries
+#       • GET / (serve index.html)
+#   - Configure CSRF, rate limiting, caching, and profanity filtering
+#
+# Imports Summary:
+#   - os, datetime, timedelta, timezone: config, timestamp math
+#   - flask.Flask, render_template, request, jsonify, Response: core Flask
+#   - cache: caching decorator
+#   - dotenv.load_dotenv: load environment variables
+#   - extensions.limiter, csrf, cache: shared Flask extensions
+#   - db (db.py), Message, Summary (models.py): ORM models
+#   - ai_routes.ai_bp: AI blueprint for /api/location-summary
+#   - json, better_profanity.profanity: load custom profanity filter
+# ----------------------------------------
+
 import os
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, jsonify, Response
@@ -5,6 +24,7 @@ from dotenv import load_dotenv
 import json
 from better_profanity import profanity
 
+# Local imports
 from extensions import limiter, csrf, cache
 from db import db
 from models import Message, Summary
@@ -13,7 +33,7 @@ from blueprints.ai_routes import ai_bp
 # Loads in .env files
 load_dotenv()
 
-# Check env for varaibles
+# Check if required env variables are provided
 required_env = [
     'FLASK_SECRET_KEY',
     'DATABASE_URL', 
@@ -25,7 +45,6 @@ required_env = [
 missing = [v for v in required_env if not os.getenv(v)]
 if missing:
     raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
-
 
 # Create and configure flask app object
 app = Flask(__name__)
@@ -55,7 +74,6 @@ app.register_blueprint(ai_bp)
 with open('static/badwords.json', encoding='utf-8') as f:
     custom_badwords = json.load(f)
 profanity.load_censor_words(custom_words=custom_badwords)
-
 
 
 # ----------------------------------------
@@ -167,6 +185,15 @@ def create_message():
             content_type='text/plain'
         )
 
+    # Check if there is profanity included in the message text
+    if profanity.contains_profanity(msg.lower()):
+        # Respond if profanity is found
+        return Response(
+            'Please remove profanity before posting.',
+            status=400,
+            content_type='text/plain'
+        )
+
     # Create message object and add it to the database
     message = Message(
         message=msg, 
@@ -178,6 +205,7 @@ def create_message():
 
     # Return message object
     return message
+
 
 # ----------------------------------------
 # Routes
@@ -198,6 +226,7 @@ def index():
 # Route: GET or POST /api/messages
 # ----------------------------------------
 @app.route('/api/messages', methods=['GET', 'POST'])
+@limiter.limit("10/minute")
 def messages():
     """
     GET /api/messages:
@@ -240,6 +269,7 @@ def messages():
 # Route: GET /api/summaries
 # ----------------------------------------
 @app.route('/api/summaries', methods=['GET'])
+@limiter.limit("10/minute")
 def get_summaries():
     """
     Return all stored location summaries (most recent first).
@@ -251,6 +281,6 @@ def get_summaries():
     # Serialize summaries
     return jsonify([s.to_dict() for s in summaries])
 
-# Entry point
+# App entry point
 if __name__ == '__main__':
     app.run(debug=False)

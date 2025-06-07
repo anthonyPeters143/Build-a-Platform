@@ -1,13 +1,26 @@
+# ----------------------------------------
+# Purpose:
+#   - Define an API blueprint for generating and storing location summaries
+#   - Reverse-geocode latitude/longitude, prompt an AI model, and save results in the database
+#
+# Imports Summary:
+#   - os, requests: fetch environment variables and make HTTP calls
+#   - dotenv.load_dotenv: load .env configurations
+#   - flask.Blueprint, request, jsonify, abort: create routes and handle HTTP requests
+#   - cache: caching decorator for responses
+#   - extensions.limiter: rate limiting decorator
+#   - db.session, models.Summary: save generated summaries to the database
+# ----------------------------------------
+
 import os
 import requests
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify, abort
 
+# Local imports
 from extensions import limiter, cache
 from db import db
 from models import Summary
-
-ai_bp = Blueprint("ai", __name__, url_prefix="/api/ai")
 
 # ----------------------------------------
 # Load environment and constants
@@ -31,6 +44,12 @@ CF_HEADERS = {
     "Authorization": f"Bearer {CF_API_TOKEN}",
     "Content-Type": "application/json"
 }
+
+# ----------------------------------------
+# Blueprint setup
+# ----------------------------------------
+ai_bp = Blueprint("ai", __name__, url_prefix="/api")
+
 
 # ----------------------------------------
 # Route: GET /api/location-summary
@@ -111,7 +130,7 @@ def location_summary():
         # Create new summary object in database
         summary = Summary(
             location=description, 
-            summary=None, 
+            summary=generated, 
             lat=float(lat), 
             lng=float(lng))
         db.session.add(summary)

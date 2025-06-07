@@ -1,3 +1,13 @@
+# ----------------------------------------
+# Purpose:
+#   - Define SQLAlchemy ORM models for 'Message' and 'Summary'
+#   - Each model can serialize itself to a JSON-friendly dict
+#
+# Imports Summary:
+#   - datetime, timezone: for timestamp defaults and conversion
+#   - db (from db.py): SQLAlchemy instance for model definitions
+# ----------------------------------------
+
 from datetime import datetime, timezone
 
 # Local imports
