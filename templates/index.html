@@ -185,9 +185,8 @@
         </div>
         </section>
     </main>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script type="module" src="{{ url_for('static', filename='scripts/globe-three.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='scripts/app.js') }}"></script>
-
 </body>
 </html>

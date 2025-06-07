@@ -333,87 +333,87 @@ function createMessageElement(m, tz) {
  * Also update globe pins via window.plotPinsOnThreeGlobe.
  */
 async function loadMessages() {
-    // // Show loading spinner
-    // showLoader();
+    // Show loading spinner
+    showLoader();
 
-    // // Determine timezone and filters
-    // const tz = tzSelect.value;
-    // const filters = getFilters(); 
+    // Determine timezone and filters
+    const tz = tzSelect.value;
+    const filters = getFilters(); 
     
-    // // Check the filters were returned
-    // if(filters) {
-    //     // Create url for queuing for messages from messages route
-    //     const url = new URL('/api/messages', window.location.origin);
+    // Check the filters were returned
+    if(filters) {
+        // Create url for queuing for messages from messages route
+        const url = new URL('/api/messages', window.location.origin);
 
-    //     // Convert filters into an array and cycle through each of them
-    //     Object.entries(filters).forEach(
-    //         // Append each key value pair to the end of the url
-    //         ([key,value]) => url.searchParams.append(key,value)
+        // Convert filters into an array and cycle through each of them
+        Object.entries(filters).forEach(
+            // Append each key value pair to the end of the url
+            ([key,value]) => url.searchParams.append(key,value)
 
-    //     );
+        );
 
-    //     // Attach CSRF token to fetch
-    //     url.headers = {
-    //         'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
-    //     }
+        // Attach CSRF token to fetch
+        url.headers = {
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        }
 
-    //     // Await and store a fetch from the messages url and conversion of the response into to a JSON  
-    //     const msgs = await (await fetch(url)).json();
+        // Await and store a fetch from the messages url and conversion of the response into to a JSON  
+        const msgs = await (await fetch(url)).json();
 
-    //     // Filter hidden messages so that only current ID are kept
-    //     hiddenMsgs = hiddenMsgs.filter(id => msgs.some(m => m.id === id));
+        // Filter hidden messages so that only current ID are kept
+        hiddenMsgs = hiddenMsgs.filter(id => msgs.some(m => m.id === id));
 
-    //     // Update hidden message local storage
-    //     saveHiddenMessage();
+        // Update hidden message local storage
+        saveHiddenMessage();
 
-    //     // Sort messages based on selected field and direction
-    //     msgs.sort((a, b) => {
-    //         let valA, valB;
-    //         switch (sortFieldSelect.value) {
-    //             case 'date':
-    //             valA = Date.parse(a.posted_at);
-    //             valB = Date.parse(b.posted_at);
-    //             break;
+        // Sort messages based on selected field and direction
+        msgs.sort((a, b) => {
+            let valA, valB;
+            switch (sortFieldSelect.value) {
+                case 'date':
+                valA = Date.parse(a.posted_at);
+                valB = Date.parse(b.posted_at);
+                break;
 
-    //             case 'length':
-    //             valA = a.message.length;
-    //             valB = b.message.length;
-    //             break;
+                case 'length':
+                valA = a.message.length;
+                valB = b.message.length;
+                break;
 
-    //             case 'lat':
-    //             valA = a.lat;
-    //             valB = b.lat;
-    //             break;
+                case 'lat':
+                valA = a.lat;
+                valB = b.lat;
+                break;
 
-    //             case 'lng':
-    //             valA = a.lng;
-    //             valB = b.lng;
-    //             break;
-    //         }
-    //         return sortDirSelect.value === 'asc' ? valA - valB : valB - valA;
-    //     });
+                case 'lng':
+                valA = a.lng;
+                valB = b.lng;
+                break;
+            }
+            return sortDirSelect.value === 'asc' ? valA - valB : valB - valA;
+        });
 
-    //     // Clear and reload visible messages
-    //     msgListEl.innerHTML='';
-    //     const visibleMsgs = msgs.filter(m => !hiddenMsgs.includes(m.id));
-    //     visibleMsgs.forEach(m=>{
-    //         // Create message HMTL elements
-    //         createMessageElement(m, tz);            
-    //     });
+        // Clear and reload visible messages
+        msgListEl.innerHTML='';
+        const visibleMsgs = msgs.filter(m => !hiddenMsgs.includes(m.id));
+        visibleMsgs.forEach(m=>{
+            // Create message HMTL elements
+            createMessageElement(m, tz);            
+        });
 
-    //     // PLot points on globe for visible messages
-    //     const points = visibleMsgs.map((m) => ({
-    //         id: m.id,
-    //         lat: m.lat,
-    //         lng: m.lng,
-    //         color: 'red',
-    //         message: m.message
-    //     }));
-    //     window.plotPinsOnThreeGlobe(points);
+        // PLot points on globe for visible messages
+        const points = visibleMsgs.map((m) => ({
+            id: m.id,
+            lat: m.lat,
+            lng: m.lng,
+            color: 'red',
+            message: m.message
+        }));
+        window.plotPinsOnThreeGlobe(points);
 
-    //     // Hide loading spinner
-    //     hideLoader();
-    // }
+        // Hide loading spinner
+        hideLoader();
+    }
 
 }
 
@@ -508,83 +508,83 @@ function createLocationSummaryElement(id, lat, lng, description, summary) {
  * Fetch all stored summaries, filter, sort, and render them.
  */
 async function loadSummaries() {
-    // // Show loader spinner
-    // showLoader();
+    // Show loader spinner
+    showLoader();
 
-    // // Determine and apply filters
-    // const filters = getFilters(); 
-    // if(filters) {
-    //     // Create url for queuing for summaries from summary route
-    //     const url = new URL('/api/summaries', window.location.origin);
+    // Determine and apply filters
+    const filters = getFilters(); 
+    if(filters) {
+        // Create url for queuing for summaries from summary route
+        const url = new URL('/api/summaries', window.location.origin);
 
-    //     // Convert filters into an array and cycle through each of them
-    //     Object.entries(filters).forEach(
-    //         // Append each key value pair to the end of the url
-    //         ([key,value]) => url.searchParams.append(key,value)
+        // Convert filters into an array and cycle through each of them
+        Object.entries(filters).forEach(
+            // Append each key value pair to the end of the url
+            ([key,value]) => url.searchParams.append(key,value)
 
-    //     );
+        );
 
-    //     // Attach CSRF token to fetch
-    //     url.headers = {
-    //         'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
-    //     }
+        // Attach CSRF token to fetch
+        url.headers = {
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        }
 
-    //     // Await and fetch summaries from /api/summaries
-    //     const res = await fetch(url);
+        // Await and fetch summaries from /api/summaries
+        const res = await fetch(url);
         
-    //     // Check if response is okay
-    //     if (res.ok) {
-    //         // Conversion of response into a json (id, summary, lat, lng, location, posted_at)
-    //         const summaries = await res.json();
+        // Check if response is okay
+        if (res.ok) {
+            // Conversion of response into a json (id, summary, lat, lng, location, posted_at)
+            const summaries = await res.json();
 
-    //         // Filter and update hidden summaries so that only current ID are kept
-    //         hiddenSummaries = hiddenSummaries.filter(id => summaries.some(s => s.id === id));
-    //         saveHiddenSummaries();
+            // Filter and update hidden summaries so that only current ID are kept
+            hiddenSummaries = hiddenSummaries.filter(id => summaries.some(s => s.id === id));
+            saveHiddenSummaries();
 
-    //         // Sort summaries
-    //         summaries.sort((a, b) => {
-    //             let valA, valB;
-    //             switch (sortFieldSelect.value) {
-    //                 case 'date':
-    //                 valA = Date.parse(a.posted_at);
-    //                 valB = Date.parse(b.posted_at);
-    //                 break;
+            // Sort summaries
+            summaries.sort((a, b) => {
+                let valA, valB;
+                switch (sortFieldSelect.value) {
+                    case 'date':
+                    valA = Date.parse(a.posted_at);
+                    valB = Date.parse(b.posted_at);
+                    break;
 
-    //                 case 'length':
-    //                 valA = a.summaries.length;
-    //                 valB = b.summaries.length;
-    //                 break;
+                    case 'length':
+                    valA = a.summaries.length;
+                    valB = b.summaries.length;
+                    break;
 
-    //                 case 'lat':
-    //                 valA = a.lat;
-    //                 valB = b.lat;
-    //                 break;
+                    case 'lat':
+                    valA = a.lat;
+                    valB = b.lat;
+                    break;
 
-    //                 case 'lng':
-    //                 valA = a.lng;
-    //                 valB = b.lng;
-    //                 break;
-    //             }
-    //             return sortDirSelect.value === 'asc' ? valA - valB : valB - valA;
-    //         });
+                    case 'lng':
+                    valA = a.lng;
+                    valB = b.lng;
+                    break;
+                }
+                return sortDirSelect.value === 'asc' ? valA - valB : valB - valA;
+            });
 
-    //         // Rerendered summaries
-    //         locationSummaryResponsesContainer.innerHTML = '';
-    //         summaries.forEach((s) => {
-    //             createLocationSummaryElement(s.id, s.lat, s.lng, s.location, s.summary);
-    //         });
+            // Rerendered summaries
+            locationSummaryResponsesContainer.innerHTML = '';
+            summaries.forEach((s) => {
+                createLocationSummaryElement(s.id, s.lat, s.lng, s.location, s.summary);
+            });
 
-    //         // Hide loading spinner
-    //         hideLoader();
+            // Hide loading spinner
+            hideLoader();
 
-    //     } else {
-    //         // Hide loading spinner
-    //         hideLoader();
+        } else {
+            // Hide loading spinner
+            hideLoader();
 
-    //         // Throw alert loading summaires
-    //         return alert('Error loading stored summaries');
-    //     }
-    // }
+            // Throw alert loading summaires
+            return alert('Error loading stored summaries');
+        }
+    }
 
 }
 

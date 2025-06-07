@@ -1,23 +1,60 @@
 import os
-from flask import Flask, render_template
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, jsonify, Response
+from dotenv import load_dotenv
+import json
+from better_profanity import profanity
 
-
+from extensions import limiter, csrf, cache
 from db import db
 from models import Message, Summary
 from blueprints.ai_routes import ai_bp
 
+# Loads in .env files
+load_dotenv()
+
+# Check env for varaibles
+required_env = [
+    'FLASK_SECRET_KEY',
+    'DATABASE_URL', 
+    'GEOAPIFY_API_TOKEN', 
+    'CF_API_TOKEN', 
+    'CF_ACCOUNT_ID', 
+    'CF_MODEL'
+    ]
+missing = [v for v in required_env if not os.getenv(v)]
+if missing:
+    raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
+
+
 # Create and configure flask app object
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
+app.config['DEBUG'] = os.getenv('FLASK_ENV') != 'production'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initlizalize app extensions
 db.init_app(app)
+csrf.init_app(app)
+cache.init_app(app, config={
+    "CACHE_TYPE": "FileSystemCache",
+    "CACHE_DIR": "instance/cache_data",
+    "CACHE_DEFAULT_TIMEOUT": int(os.getenv("CACHE_DEFAULT_TIMEOUT", "3600"))
+})
+limiter.init_app(app)
+
+# Create database tables
+with app.app_context():
+    db.create_all()
 
 # Register blueprint for ai routes
 app.register_blueprint(ai_bp)
+
+# Load from badwords.json for profanity filter
+with open('static/badwords.json', encoding='utf-8') as f:
+    custom_badwords = json.load(f)
+profanity.load_censor_words(custom_words=custom_badwords)
 
 
 
@@ -213,3 +250,7 @@ def get_summaries():
     
     # Serialize summaries
     return jsonify([s.to_dict() for s in summaries])
+
+# Entry point
+if __name__ == '__main__':
+    app.run(debug=False)

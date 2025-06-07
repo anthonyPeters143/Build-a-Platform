@@ -3,6 +3,7 @@ import requests
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify, abort
 
+from extensions import limiter, cache
 from db import db
 from models import Summary
 
@@ -20,6 +21,9 @@ GEO_TOKEN = os.getenv("GEOAPIFY_API_TOKEN")
 # Route: GET /api/location-summary
 # ----------------------------------------
 @ai_bp.route("/location-summary", methods=["GET"])
+@limiter.limit("10/minute")
+# Cache for 24 hours, using lat and lng inputs
+@cache.cached(timeout=86400, query_string=True)
 def location_summary():
     """
     Reverse-geocode a given lat/lng, prompt AI to generate a summary, and store it.
