@@ -14,8 +14,23 @@ ai_bp = Blueprint("ai", __name__, url_prefix="/api/ai")
 # ----------------------------------------
 load_dotenv()
 
+RESPONSE_LENGTH = os.getenv("RESPONSE_WORD_LENGTH")
 GEO_API = os.getenv("GEOAPIFY_API")
 GEO_TOKEN = os.getenv("GEOAPIFY_API_TOKEN")
+
+CF_ACCOUNT_ID = os.getenv("CF_ACCOUNT_ID")
+CF_API_TOKEN = os.getenv("CF_API_TOKEN")
+CF_MODEL = os.getenv("CF_MODEL")
+
+# Construct Cloudflare AI endpoint and headers
+CF_ENDPOINT = (
+    f"https://api.cloudflare.com/client/v4/accounts/"
+    f"{CF_ACCOUNT_ID}/ai/run/{CF_MODEL}"
+)
+CF_HEADERS = {
+    "Authorization": f"Bearer {CF_API_TOKEN}",
+    "Content-Type": "application/json"
+}
 
 # ----------------------------------------
 # Route: GET /api/location-summary
@@ -68,6 +83,29 @@ def location_summary():
     # Create a comma sperated string from the description
     description = ", ".join(place_parts)
 
+    # Create ai mmodel prompt
+    prompt = f"Give me an description of the area {description} within {RESPONSE_LENGTH} words, without stopping in the middle of a sentence".strip()
+
+    # Attempt to prompt ai model
+    try:
+        payload = {
+            "prompt": prompt,
+            "parameters": {
+                "max_tokens": 60,
+                "temperature": 0.7,
+                "top_p": 0.9
+            }
+        }
+        resp = requests.post(CF_ENDPOINT, headers=CF_HEADERS, json=payload, timeout=30)
+        resp.raise_for_status()
+        generated = resp.json().get("result", {}).get("response", "") 
+    except Exception as e:
+        # Throw error if model is unable to respond
+        return jsonify({
+            "error": "Model response error",
+            "details": repr(e)
+        }), 502
+
     # Attempt to save location summary
     try:
         # Create new summary object in database
@@ -88,6 +126,6 @@ def location_summary():
         "lat": lat,
         "lng": lng,
         "description": description,
-        "summary": None,
+        "summary": generated,
         "posted_at": summary.posted_at
     })
